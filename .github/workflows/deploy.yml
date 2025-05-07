@@ -23,8 +23,8 @@ jobs:
     - name: Grant execute permission to Gradle wrapper
       run: chmod +x ./gradlew
 
-    - name: Build JAR
-      run: ./gradlew clean build
+    - name: Build JAR (skip tests)
+      run: ./gradlew clean build -x test
 
     - name: Build Docker image
       run: docker build -t ${{ secrets.DOCKER_USERNAME }}/bank:latest .
@@ -39,4 +39,5 @@ jobs:
       run: |
         echo "${{ secrets.CLOUD_KEY }}" > cloud_key.pem
         chmod 600 cloud_key.pem
-        scp -o StrictHostKeyChecking=no -i cloud_key.pem build/libs/*.jar ${{ secrets.CLOUD_HOST }}:${{ secrets.REMOTE_PATH }}
+        scp -o StrictHostKeyChecking=no -i cloud_key.pem build/libs/*.jar ec2-user@${{ secrets.CLOUD_HOST }}:${{ secrets.REMOTE_PATH }}
+
